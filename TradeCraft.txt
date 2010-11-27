@@ -2,12 +2,12 @@
 # http://www.minecraftwiki.net/wiki/Data_values
 
 Cobblestone,  4, 64:1
-Gravel,      14, 32:1
+Gravel,      13, 32:1
 Sand,        12, 32:1
 Dirt,         3, 32:1
-Log,          5, 8:1
+Log,         17, 8:1
 Coal,       263, 4:1
 Clay,       337, 2:1
-Iron,       265, 1:8
+Iron,       265, 1:4
 Diamond,    264, 1:64
 
