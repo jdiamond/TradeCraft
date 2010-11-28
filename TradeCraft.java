@@ -8,9 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TradeCraft extends Plugin {
+
     // Some constants
     private static final String name = "TradeCraft";
-    private static final String version = "1.0";
+    private static final String version = "1.1";
     private static final String configurationFileName = name + ".txt";
 
     // Stuff used to interact with the server.
@@ -155,8 +156,17 @@ public class TradeCraft extends Plugin {
             Chest chest = (Chest) server.getComplexBlock(x, y - 1, z);
             ChestInfo chestInfo = getChestInfo(chest);
 
+            if (chestInfo.total == 0) {
+                player.sendMessage(
+                        "Exchange rate for " + currentTradeInfo.name +
+                        " is " + currentTradeInfo.amount + " items" +
+                        " for " + currentTradeInfo.value + " gold.");
+                player.sendMessage("The chest is empty.");
+                return false;
+            }
+
             if (chestInfo.id == MIXED) {
-                player.sendMessage("Your chest has more than one type of item in it!");
+                player.sendMessage("The chest has more than one type of item in it!");
                 return false;
             }
 

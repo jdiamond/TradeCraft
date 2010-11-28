@@ -83,6 +83,6 @@ gold ingots. Selling 6 items will get you 4 gold ingots. Likewise, spending 2
 gold ingots will get you 3 items and spending 4 gold ingots will get you 6
 items.
 
-There is currently no way to see the configured exchange rates in the game.
-Put it on the signs you place above your chests.
+If you click on a sign above an empty chest, you'll see a message saying what
+the exchange rate is.
 
