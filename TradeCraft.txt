@@ -10,5 +10,6 @@ Log,         17,  8:1
 Coal,       263,  4:1
 Clay,       337,  2:1
 Iron,       265,  1:4
+Obsidian,    49,  1:32
 Diamond,    264,  1:64
 
