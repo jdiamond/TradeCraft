@@ -80,6 +80,8 @@ public class TradeCraft extends Plugin {
 
     private void loadConfiguration() {
         try {
+            tradeInfo.clear();
+
             BufferedReader configurationFile = new BufferedReader(new FileReader(configurationFileName));
 
             int lineNumber = 0;
