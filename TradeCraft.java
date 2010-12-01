@@ -11,7 +11,7 @@ public class TradeCraft extends Plugin {
 
     // Some constants
     private static final String name = "TradeCraft";
-    private static final String version = "1.1";
+    private static final String version = "129";
     private static final String configurationFileName = name + ".txt";
 
     // Stuff used to interact with the server.
@@ -72,7 +72,7 @@ public class TradeCraft extends Plugin {
         loadConfiguration();
 
         etc.getLoader().addListener(
-                PluginLoader.Hook.BLOCK_CREATED,
+                PluginLoader.Hook.BLOCK_RIGHTCLICKED,
                 listener,
                 this,
                 PluginListener.Priority.MEDIUM);
@@ -126,16 +126,13 @@ public class TradeCraft extends Plugin {
 
     private class TradeCraftListener extends PluginListener {
 
-        public boolean onBlockCreate(
+        public void onBlockRightClicked(
                 Player player,
-                Block blockPlaced,
                 Block blockClicked,
-                int itemInHand) {
+                Item itemInHand) {
 
-            int blockClickedType = blockClicked.getType();
-
-            if (blockClickedType != WALL_SIGN) {
-                return false;
+            if (blockClicked.getType() != WALL_SIGN) {
+                return;
             }
 
             int x = blockClicked.getX();
@@ -146,13 +143,13 @@ public class TradeCraft extends Plugin {
             TradeInfo currentTradeInfo = getTradeInfo(sign);
 
             if (currentTradeInfo == null) {
-                return false;
+                return;
             }
 
             Block block = (Block) server.getBlockAt(x, y - 1, z);
 
             if (block.getType() != CHEST) {
-                return false;
+                return;
             }
 
             Chest chest = (Chest) server.getComplexBlock(x, y - 1, z);
@@ -164,12 +161,12 @@ public class TradeCraft extends Plugin {
                         " is " + currentTradeInfo.amount + " items" +
                         " for " + currentTradeInfo.value + " gold.");
                 player.sendMessage("The chest is empty.");
-                return false;
+                return;
             }
 
             if (chestInfo.id == MIXED) {
                 player.sendMessage("The chest has more than one type of item in it!");
-                return false;
+                return;
             }
 
             if (chestInfo.id == GOLD_INGOT) {
@@ -180,7 +177,7 @@ public class TradeCraft extends Plugin {
                 player.sendMessage("You can't sell that here!");
             }
 
-            return false;
+            return;
         }
 
         private TradeInfo getTradeInfo(Sign sign) {
@@ -199,7 +196,7 @@ public class TradeCraft extends Plugin {
         private ChestInfo getChestInfo(Chest chest) {
             ChestInfo info = new ChestInfo();
 
-            for (hl realItem : chest.getArray()) {
+            for (hm realItem : chest.getArray()) {
                 if (realItem != null) {
                     Item item = new Item(realItem);
                     info.addItem(item);
