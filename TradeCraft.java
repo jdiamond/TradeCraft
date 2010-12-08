@@ -170,16 +170,22 @@ public class TradeCraft extends Plugin {
             ChestInfo chestInfo = new ChestInfo(chest);
 
             if (chestInfo.total == 0) {
-                sendMessage(player,
-                            "You can buy %1$d %2$s items for %3$d gold.",
-                            tradeInfo.buyAmount,
-                            tradeInfo.name,
-                            tradeInfo.buyValue);
-                sendMessage(player,
-                            "You can sell %1$d %2$s items for %3$d gold.",
-                            tradeInfo.sellAmount,
-                            tradeInfo.name,
-                            tradeInfo.sellValue);
+            	if (tradeInfo.buyAmount != 0) {
+	                sendMessage(player,
+	                            "You can buy %1$d %2$s items for %3$d gold.",
+	                            tradeInfo.buyAmount,
+	                            tradeInfo.name,
+	                            tradeInfo.buyValue);
+            	}
+                
+                if (tradeInfo.sellAmount != 0) {
+	                sendMessage(player,
+	                            "You can sell %1$d %2$s items for %3$d gold.",
+	                            tradeInfo.sellAmount,
+	                            tradeInfo.name,
+	                            tradeInfo.sellValue);
+                }
+
                 sendMessage(player, "The chest is empty.");
                 return;
             }
@@ -215,48 +221,58 @@ public class TradeCraft extends Plugin {
 
         private void makePurchase(
                 Player player,
-                TradeInfo currentTradeInfo,
+                TradeInfo tradeInfo,
                 ChestInfo chestInfo,
                 Chest chest) {
 
-            int totalItems = chestInfo.total / currentTradeInfo.buyValue * currentTradeInfo.buyAmount;
+        	if (tradeInfo.buyAmount == 0) {
+                sendMessage(player, "You can't buy that here!");
+                return;
+        	}
+        	
+            int totalItems = chestInfo.total / tradeInfo.buyValue * tradeInfo.buyAmount;
 
             if (totalItems == 0) {
                 sendMessage(player,
                             "You need to spend at least %1$d gold to get any items.",
-                            currentTradeInfo.buyValue);
+                            tradeInfo.buyValue);
                 return;
             }
 
             sendMessage(player,
                         "You bought %1$d %2$s for %3$d gold.",
                         totalItems,
-                        currentTradeInfo.name,
+                        tradeInfo.name,
                         chestInfo.total);
 
-            populateChest(chest, currentTradeInfo.id, totalItems);
+            populateChest(chest, tradeInfo.id, totalItems);
         }
 
         private void makeSale(
                 Player player,
-                TradeInfo currentTradeInfo,
+                TradeInfo tradeInfo,
                 ChestInfo chestInfo,
                 Chest chest) {
 
-            int totalValue = chestInfo.total / currentTradeInfo.sellAmount * currentTradeInfo.sellValue;
+        	if (tradeInfo.sellAmount == 0) {
+                sendMessage(player, "You can't sell that here!");
+                return;
+        	}
+
+        	int totalValue = chestInfo.total / tradeInfo.sellAmount * tradeInfo.sellValue;
 
             if (totalValue == 0) {
                 sendMessage(player,
                             "You need to sell at least %1$d %2$s to get any gold.",
-                            currentTradeInfo.sellAmount,
-                            currentTradeInfo.name);
+                            tradeInfo.sellAmount,
+                            tradeInfo.name);
                 return;
             }
 
             sendMessage(player,
                         "You sold %1$d %2$s for %3$d gold.",
                         chestInfo.total,
-                        currentTradeInfo.name,
+                        tradeInfo.name,
                         totalValue);
 
             populateChest(chest, GOLD_INGOT, totalValue);
