@@ -71,7 +71,7 @@ The second value is the block or item ID. You can see these values here:
 
 http://www.minecraftwiki.net/wiki/Data_values
 
-The last value is the exchange rate. The number before the colon is how many of
+The third value is the exchange rate. The number before the colon is how many of
 that item needs to be sold to earn the number of gold ingots specified as the
 number after the colon. In the above example, players have to sell 32 sand
 blocks to get a single gold ingot. They have to pay 64 gold ingots to buy a
@@ -83,6 +83,22 @@ gold ingots. Selling 6 items will get you 4 gold ingots. Likewise, spending 2
 gold ingots will get you 3 items and spending 4 gold ingots will get you 6
 items.
 
-If you click on a sign above an empty chest, you'll see a message saying what
-the exchange rate is.
+It's possible to configure separate exchange rates for buying and selling. If
+only a single ratio is specified, that ratio is used for both buying and
+selling. If two ratios are specified, the first is for buying and the second
+is for selling.
 
+For example, to let players buy 32 sand for 1 gold, but only be able to sell
+64 sand for 1 gold, you would configure it like this:
+
+Sand,12,32:1,64:1 
+
+If you use a ratio of 0:0, that disables buying or selling of that item type.
+
+For example, to allow players to buy diamonds, but not sell them, you would
+configure it like this:
+
+Diamond,264,1:64,0:0
+
+If you click on a sign above an empty chest, you'll see a message saying what
+the exchange rates for both buying and selling are.

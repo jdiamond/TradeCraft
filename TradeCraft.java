@@ -15,7 +15,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    private static final String version = "131.1+";
+    private static final String version = "131.2";
 
     // Stuff used to interact with the server.
     private final Logger log = Logger.getLogger("Minecraft");
