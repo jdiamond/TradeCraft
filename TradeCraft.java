@@ -15,7 +15,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    private static final String version = "131.1";
+    private static final String version = "131.1+";
 
     // Stuff used to interact with the server.
     private final Logger log = Logger.getLogger("Minecraft");
@@ -67,7 +67,8 @@ public class TradeCraft extends Plugin {
         private final Pattern infoPattern = Pattern.compile(
                 "^\\s*([^,]+)\\s*," + // name
                 "\\s*(\\d+)\\s*," + // id
-                "\\s*(\\d+):(\\d+)\\s*$"); // amount:value
+                "\\s*(\\d+)\\s*:\\s*(\\d+)\\s*" + // buyAmount:buyValue
+                "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*$"); // sellAmount:sellValue
 
         private void load() {
             try {
@@ -104,8 +105,14 @@ public class TradeCraft extends Plugin {
                     TradeInfo info = new TradeInfo();
                     info.name = infoMatcher.group(1);
                     info.id = Integer.parseInt(infoMatcher.group(2));
-                    info.amount = Integer.parseInt(infoMatcher.group(3));
-                    info.value = Integer.parseInt(infoMatcher.group(4));
+                    info.sellAmount = info.buyAmount = Integer.parseInt(infoMatcher.group(3));
+                    info.sellValue = info.buyValue = Integer.parseInt(infoMatcher.group(4));
+                    
+                    if (infoMatcher.group(5) != null) {
+                    	info.sellAmount = Integer.parseInt(infoMatcher.group(5));
+                    	info.sellValue = Integer.parseInt(infoMatcher.group(6));
+                    }
+                    
                     tradeInfo.put("[" + info.name.toUpperCase() + "]", info);
                 }
 
@@ -124,8 +131,10 @@ public class TradeCraft extends Plugin {
     static class TradeInfo {
         public String name;
         public int id;
-        public int amount;
-        public int value;
+        public int buyAmount;
+        public int buyValue;
+        public int sellAmount;
+        public int sellValue;
     }
 
     // This is where most of the work is done.
@@ -162,10 +171,15 @@ public class TradeCraft extends Plugin {
 
             if (chestInfo.total == 0) {
                 sendMessage(player,
-                            "Exchange rate for %1$s is %2$d items for %3$d gold.",
+                            "You can buy %1$d %2$s items for %3$d gold.",
+                            tradeInfo.buyAmount,
                             tradeInfo.name,
-                            tradeInfo.amount,
-                            tradeInfo.value);
+                            tradeInfo.buyValue);
+                sendMessage(player,
+                            "You can sell %1$d %2$s items for %3$d gold.",
+                            tradeInfo.sellAmount,
+                            tradeInfo.name,
+                            tradeInfo.sellValue);
                 sendMessage(player, "The chest is empty.");
                 return;
             }
@@ -205,12 +219,12 @@ public class TradeCraft extends Plugin {
                 ChestInfo chestInfo,
                 Chest chest) {
 
-            int totalItems = chestInfo.total / currentTradeInfo.value * currentTradeInfo.amount;
+            int totalItems = chestInfo.total / currentTradeInfo.buyValue * currentTradeInfo.buyAmount;
 
             if (totalItems == 0) {
                 sendMessage(player,
                             "You need to spend at least %1$d gold to get any items.",
-                            currentTradeInfo.value);
+                            currentTradeInfo.buyValue);
                 return;
             }
 
@@ -229,12 +243,12 @@ public class TradeCraft extends Plugin {
                 ChestInfo chestInfo,
                 Chest chest) {
 
-            int totalValue = chestInfo.total / currentTradeInfo.amount * currentTradeInfo.value;
+            int totalValue = chestInfo.total / currentTradeInfo.sellAmount * currentTradeInfo.sellValue;
 
             if (totalValue == 0) {
                 sendMessage(player,
                             "You need to sell at least %1$d %2$s to get any gold.",
-                            currentTradeInfo.amount,
+                            currentTradeInfo.sellAmount,
                             currentTradeInfo.name);
                 return;
             }

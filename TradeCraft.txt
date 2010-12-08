@@ -1,9 +1,9 @@
-# Item name, data value, exchange rate (item to gold)
+# Item name, data value, buy exchange rate (item to gold), sell exchange rate (optional)
 # http://www.minecraftwiki.net/wiki/Data_values
 
 Cobblestone,  4, 64:1
 Gravel,      13, 32:1
-Sand,        12, 32:1
+Sand,        12, 32:1, 48:1
 Dirt,         3, 32:1
 Redstone,   331, 16:1
 Log,         17,  8:1
