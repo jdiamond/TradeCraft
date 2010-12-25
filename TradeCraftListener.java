@@ -6,7 +6,7 @@ class TradeCraftListener extends PluginListener {
         this.plugin = plugin;
     }
 
-	public void onBlockRightClicked(
+    public void onBlockRightClicked(
             Player player,
             Block blockClicked,
             Item itemInHand) {
@@ -20,7 +20,7 @@ class TradeCraftListener extends PluginListener {
         int z = blockClicked.getZ();
 
         Sign sign = (Sign)plugin.server.getComplexBlock(x, y, z);
-        TradeCraftConfigurationInfo tradeInfo = getTradeInfo(sign);
+        TradeCraftConfigurationInfo tradeInfo = getConfigurationInfo(sign);
 
         if (tradeInfo == null) {
             return;
@@ -37,89 +37,23 @@ class TradeCraftListener extends PluginListener {
 
         String merchantName = getMerchantName(sign);
 
-        if (merchantName == null) {
-            if (chestInfo.total == 0) {
-                if (tradeInfo.buyAmount != 0) {
-                    plugin.sendMessage(player,
-                                "You can buy %1$d %2$s items for %3$d gold.",
-                                tradeInfo.buyAmount,
-                                tradeInfo.name,
-                                tradeInfo.buyValue);
-                }
-
-                if (tradeInfo.sellAmount != 0) {
-                    plugin.sendMessage(player,
-                                "You can sell %1$d %2$s items for %3$d gold.",
-                                tradeInfo.sellAmount,
-                                tradeInfo.name,
-                                tradeInfo.sellValue);
-                }
-
-                plugin.sendMessage(player, "The chest is empty.");
-                return;
-            }
-
-            if (!chestInfo.containsOnlyOneItemType()) {
-                plugin.sendMessage(player, "The chest has more than one type of item in it!");
-                return;
-            }
-
-            if (chestInfo.id == TradeCraft.GOLD_INGOT) {
-                makePurchase(player, tradeInfo, chestInfo, chest);
-            } else if (chestInfo.id == tradeInfo.id) {
-                makeSale(player, tradeInfo, chestInfo, chest);
-            } else {
-                plugin.sendMessage(player, "You can't sell that here!");
-            }
+        if (merchantName != null && player.getName().equals(merchantName)) {
+            handleMerchantClick(player, x, y, z, tradeInfo, chest, chestInfo, merchantName);
         } else {
-            if (player.getName().equals(merchantName)) {
-                if (!chestInfo.containsOnlyOneItemType()) {
-                    plugin.sendMessage(player, "The chest has more than one type of item in it!");
-                    return;
-                }
-                if (chestInfo.total == 0) {
-                    int goldAmount = plugin.data.withdrawGold(x, y, z);
-                    if (goldAmount > 0) {
-                        populateChest(chest, TradeCraft.GOLD_INGOT, goldAmount);
-                        plugin.sendMessage(player, "Withdrew %1$d Gold.", goldAmount);
-                    } else {
-                        int itemAmount = plugin.data.withdraw(x, y, z);
-                        if (itemAmount > 0) {
-                            populateChest(chest, tradeInfo.id, itemAmount);
-                            plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
-                        } else {
-                            plugin.sendMessage(player, "There is nothing to withdraw.");
-                        }
-                    }
-                } else if (chestInfo.id == TradeCraft.GOLD_INGOT) {
-                    plugin.data.depositGold(x, y, z, chestInfo.total);
-                    plugin.sendMessage(player, "Deposited %1$d Gold.", chestInfo.total);
-                    populateChest(chest, 0, 0);
-                    int itemAmount = plugin.data.withdraw(x, y, z);
-                    if (itemAmount > 0) {
-                        populateChest(chest, tradeInfo.id, itemAmount);
-                        plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
-                    }
-                } else if (chestInfo.id == tradeInfo.id) {
-                    plugin.data.deposit(x, y, z, chestInfo.total);
-                    populateChest(chest, 0, 0);
-                    plugin.sendMessage(player, "Deposited %1$d %2$s.", chestInfo.total, tradeInfo.name);
-                } else {
-                    plugin.sendMessage(player, "You can't deposit that here!");
-                }
-            }
+            handlePatronClick(player, tradeInfo, chest, chestInfo);
         }
 
         return;
     }
 
-    private TradeCraftConfigurationInfo getTradeInfo(Sign sign) {
+    private TradeCraftConfigurationInfo getConfigurationInfo(Sign sign) {
         for (int i = 0; i < 4; i++) {
             String signText = sign.getText(i);
-            TradeCraftConfigurationInfo currentTradeInfo = plugin.configuration.get(signText);
 
-            if (currentTradeInfo != null) {
-                return currentTradeInfo;
+            TradeCraftConfigurationInfo info = plugin.configuration.get(signText);
+
+            if (info != null) {
+                return info;
             }
         }
 
@@ -136,7 +70,92 @@ class TradeCraftListener extends PluginListener {
         }
 
         return null;
+    }
 
+    private void handleMerchantClick(
+            Player player,
+            int x, int y, int z,
+            TradeCraftConfigurationInfo tradeInfo,
+            Chest chest,
+            TradeCraftChestInfo chestInfo,
+            String merchantName) {
+
+        if (!chestInfo.containsOnlyOneItemType()) {
+            plugin.sendMessage(player, "The chest has more than one type of item in it!");
+            return;
+        }
+
+        if (chestInfo.total == 0) {
+            int goldAmount = plugin.data.withdrawGold(x, y, z);
+            if (goldAmount > 0) {
+                populateChest(chest, TradeCraft.GOLD_INGOT, goldAmount);
+                plugin.sendMessage(player, "Withdrew %1$d Gold.", goldAmount);
+            } else {
+                int itemAmount = plugin.data.withdraw(x, y, z);
+                if (itemAmount > 0) {
+                    populateChest(chest, tradeInfo.id, itemAmount);
+                    plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
+                } else {
+                    plugin.sendMessage(player, "There is nothing to withdraw.");
+                }
+            }
+        } else if (chestInfo.id == TradeCraft.GOLD_INGOT) {
+            plugin.data.depositGold(x, y, z, chestInfo.total);
+            plugin.sendMessage(player, "Deposited %1$d Gold.", chestInfo.total);
+            populateChest(chest, 0, 0);
+            int itemAmount = plugin.data.withdraw(x, y, z);
+            if (itemAmount > 0) {
+                populateChest(chest, tradeInfo.id, itemAmount);
+                plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
+            }
+        } else if (chestInfo.id == tradeInfo.id) {
+            plugin.data.deposit(x, y, z, chestInfo.total);
+            populateChest(chest, 0, 0);
+            plugin.sendMessage(player, "Deposited %1$d %2$s.", chestInfo.total, tradeInfo.name);
+        } else {
+            plugin.sendMessage(player, "You can't deposit that here!");
+        }
+    }
+
+    private void handlePatronClick(
+            Player player,
+            TradeCraftConfigurationInfo tradeInfo,
+            Chest chest,
+            TradeCraftChestInfo chestInfo) {
+
+        if (chestInfo.total == 0) {
+            if (tradeInfo.buyAmount != 0) {
+                plugin.sendMessage(player,
+                        "You can buy %1$d %2$s items for %3$d gold.",
+                        tradeInfo.buyAmount,
+                        tradeInfo.name,
+                        tradeInfo.buyValue);
+            }
+
+            if (tradeInfo.sellAmount != 0) {
+                plugin.sendMessage(player,
+                        "You can sell %1$d %2$s items for %3$d gold.",
+                        tradeInfo.sellAmount,
+                        tradeInfo.name,
+                        tradeInfo.sellValue);
+            }
+
+            plugin.sendMessage(player, "The chest is empty.");
+            return;
+        }
+
+        if (!chestInfo.containsOnlyOneItemType()) {
+            plugin.sendMessage(player, "The chest has more than one type of item in it!");
+            return;
+        }
+
+        if (chestInfo.id == TradeCraft.GOLD_INGOT) {
+            makePurchase(player, tradeInfo, chestInfo, chest);
+        } else if (chestInfo.id == tradeInfo.id) {
+            makeSale(player, tradeInfo, chestInfo, chest);
+        } else {
+            plugin.sendMessage(player, "You can't sell that here!");
+        }
     }
 
     private void makePurchase(
