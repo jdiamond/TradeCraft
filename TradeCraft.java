@@ -68,11 +68,64 @@ public class TradeCraft extends Plugin {
         player.sendMessage(message);
     }
 
+    TradeCraftStore getStoreFromSignOrChestBlock(Block block) {
+        if (block.getType() == TradeCraft.CHEST) {
+            block = server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
+        }
+
+        return getStoreFromSignBlock(block);
+    }
+
+    TradeCraftStore getStoreFromSignBlock(Block block) {
+        if (block.getType() != TradeCraft.WALL_SIGN) {
+            return null;
+        }
+
+        int x = block.getX();
+        int y = block.getY();
+        int z = block.getZ();
+
+        Sign sign = (Sign)server.getComplexBlock(x, y, z);
+
+        // The sign at this location can be null if it was just destroyed.
+        if (sign == null) {
+            return null;
+        }
+
+        String itemName = getItemName(sign);
+
+        if (itemName == null) {
+            return null;
+        }
+
+        if (!configuration.isConfigured(itemName)) {
+            return null;
+        }
+
+        Block blockBelowSign = server.getBlockAt(x, y - 1, z);
+
+        if (blockBelowSign.getType() != TradeCraft.CHEST) {
+            return null;
+        }
+
+        Chest chest = (Chest)server.getComplexBlock(x, y - 1, z);
+
+        TradeCraftStore store;
+
+        if (getOwnerName(sign) == null) {
+            store = new TradeCraftInfiniteStore(this, sign, chest);
+        } else {
+            store = new TradeCraftPlayerOwnedStore(this, sign, chest);
+        }
+
+        return store;
+    }
+
     String getItemName(Sign sign) {
         return getSpecialText(sign, "[", "]");
     }
 
-    String getMerchantName(Sign sign) {
+    String getOwnerName(Sign sign) {
         return getSpecialText(sign, "-", "-");
     }
 

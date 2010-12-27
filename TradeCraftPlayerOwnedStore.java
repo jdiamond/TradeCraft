@@ -1,5 +1,5 @@
 public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
-    private final String merchantName;
+    private final String ownerName;
     private final String itemName;
     private final int itemType;
     private final TradeCraftExchangeRate buyRate;
@@ -8,7 +8,7 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
     public TradeCraftPlayerOwnedStore(TradeCraft plugin, Sign sign, Chest chest) {
         super(plugin, sign, chest);
 
-        merchantName = plugin.getMerchantName(sign);
+        ownerName = plugin.getOwnerName(sign);
         itemName = plugin.getItemName(sign);
         itemType = plugin.configuration.get(itemName).id;
         buyRate = plugin.getExchangeRate(sign, 1);
@@ -20,7 +20,7 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
     }
 
     public boolean isOwnedByPlayer(Player player) {
-        return merchantName != null && player.getName().equals(merchantName);
+        return ownerName != null && player.getName().equals(ownerName);
     }
 
     public int getItemType() {
