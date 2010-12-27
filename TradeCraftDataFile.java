@@ -89,7 +89,25 @@ class TradeCraftDataFile {
         }
     }
 
-    public synchronized void deposit(int x, int y, int z, int itemAmount) {
+    public synchronized int getItemAmount(int x, int y, int z) {
+        String key = getKey(x, y, z);
+        if (data.containsKey(key)) {
+            TradeCraftDataInfo info = data.get(key);
+            return info.itemAmount;
+        }
+        return 0;
+    }
+
+    public synchronized int getGoldAmount(int x, int y, int z) {
+        String key = getKey(x, y, z);
+        if (data.containsKey(key)) {
+            TradeCraftDataInfo info = data.get(key);
+            return info.goldAmount;
+        }
+        return 0;
+    }
+
+    public synchronized void depositItems(int x, int y, int z, int itemAmount) {
         String key = getKey(x, y, z);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -115,7 +133,7 @@ class TradeCraftDataFile {
         save();
     }
 
-    public synchronized int withdraw(int x, int y, int z) {
+    public synchronized int withdrawItems(int x, int y, int z) {
         String key = getKey(x, y, z);
         TradeCraftDataInfo info = data.get(key);
         int itemAmount = info.itemAmount;
@@ -139,5 +157,13 @@ class TradeCraftDataFile {
 
     private String getKey(int x, int y, int z) {
         return x + "," + y + "," + z;
+    }
+
+    public synchronized void updateItemAndGoldAmounts(int x, int y, int z, int itemAdjustment, int goldAdjustment) {
+        String key = getKey(x, y, z);
+        TradeCraftDataInfo info = data.get(key);
+        info.itemAmount += itemAdjustment;
+        info.goldAmount += goldAdjustment;
+        save();
     }
 }

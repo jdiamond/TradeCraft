@@ -67,13 +67,17 @@ class TradeCraftConfigurationFile {
                     info.sellValue = Integer.parseInt(infoMatcher.group(6));
                 }
 
-                infos.put("[" + info.name.toUpperCase() + "]", info);
+                infos.put(info.name.toUpperCase(), info);
             }
 
             configurationFile.close();
         } catch (IOException e) {
             plugin.log.warning("Error reading " + fileName);
         }
+    }
+
+    public boolean isConfigured(String name) {
+        return infos.containsKey(name.toUpperCase());
     }
 
     public TradeCraftConfigurationInfo get(String name) {

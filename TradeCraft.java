@@ -1,4 +1,6 @@
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TradeCraft extends Plugin {
 
@@ -27,6 +29,8 @@ public class TradeCraft extends Plugin {
 
     // The maximum number of items that can be stacked in one slot.
     static final int MAX_STACK_SIZE = 64;
+
+    private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
     public void enable() {
     }
@@ -62,5 +66,42 @@ public class TradeCraft extends Plugin {
     void sendMessage(Player player, String format, Object... args) {
         String message = String.format(format, args);
         player.sendMessage(message);
+    }
+
+    String getItemName(Sign sign) {
+        return getSpecialText(sign, "[", "]");
+    }
+
+    String getMerchantName(Sign sign) {
+        return getSpecialText(sign, "-", "-");
+    }
+
+    private String getSpecialText(Sign sign, String prefix, String suffix) {
+        for (int i = 0; i < 4; i++) {
+            String signText = sign.getText(i);
+
+            if (signText.startsWith(prefix) &&
+                signText.endsWith(suffix) &&
+                signText.length() > 2) {
+                return signText.substring(1, signText.length() - 1);
+            }
+        }
+
+        return null;
+    }
+
+    TradeCraftExchangeRate getExchangeRate(Sign sign, int lineNumber) {
+        TradeCraftExchangeRate rate = new TradeCraftExchangeRate();
+
+        String signText = sign.getText(lineNumber);
+
+        Matcher matcher = ratePattern.matcher(signText);
+
+        if (matcher.find()) {
+            rate.amount = Integer.parseInt(matcher.group(1));
+            rate.value = Integer.parseInt(matcher.group(2));
+        }
+
+        return rate;
     }
 }
