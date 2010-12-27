@@ -26,8 +26,8 @@ class TradeCraftListener extends PluginListener {
         return;
     }
 
-    public boolean onBlockDestroy(Player player, Block block) {
-        TradeCraftStore store = getStore(block);
+    public boolean onBlockBreak(Player player, Block block) {
+        TradeCraftStore store = getStoreFromSignOrChestBlock(block);
 
         if (store == null) {
             return false;
@@ -44,10 +44,28 @@ class TradeCraftListener extends PluginListener {
 
         // This sign or chest is part of a store that belongs to another player.
         // Don't let the current player destroy it.
+        plugin.sendMessage(player, "You can't destroy signs or chests that belong to other players!");
         return true;
     }
 
-    private TradeCraftStore getStore(Block block) {
+    public boolean onSignChange(Player player, Sign sign) {
+        String merchantName = getMerchantName(sign);
+
+        if (merchantName == null) {
+            return false;
+        }
+
+        if (merchantName.equals(player.getName())) {
+            return false;
+        }
+
+        // The sign has some other player's name on it.
+        // Don't let the current player create it.
+        plugin.sendMessage(player, "You can't create signs with other players names on them!");
+        return true;
+    }
+
+    private TradeCraftStore getStoreFromSignOrChestBlock(Block block) {
         if (block.getType() == TradeCraft.CHEST) {
             block = plugin.server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         }

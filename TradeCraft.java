@@ -47,7 +47,13 @@ public class TradeCraft extends Plugin {
                 PluginListener.Priority.MEDIUM);
 
         etc.getLoader().addListener(
-                PluginLoader.Hook.BLOCK_DESTROYED,
+                PluginLoader.Hook.BLOCK_BROKEN,
+                listener,
+                this,
+                PluginListener.Priority.MEDIUM);
+
+        etc.getLoader().addListener(
+                PluginLoader.Hook.SIGN_CHANGE,
                 listener,
                 this,
                 PluginListener.Priority.MEDIUM);
