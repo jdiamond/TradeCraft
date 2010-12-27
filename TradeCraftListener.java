@@ -24,7 +24,13 @@ class TradeCraftListener extends PluginListener {
         }
 
         if (store.playerCanDestroy(player)) {
-            return false;
+            if (store.getItemsInStore() == 0 && store.getGoldInStore() == 0) {
+                return false;
+            }
+ 
+            plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
+
+            return true;
         }
 
         plugin.sendMessage(player, "You can't destroy this sign or chest!");
