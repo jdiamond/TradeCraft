@@ -13,7 +13,7 @@ class TradeCraftDataFile {
 
 	private static final String fileName = TradeCraft.pluginName + ".data";
     private static final Pattern infoPattern = Pattern.compile(
-            "^\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)" + // x,y,z
+            "^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)" + // x,y,z
             "\\s*=\\s*" +
             "(\\d+)\\s*,\\s*(\\d+)\\s*$"); // itemAmount,goldAmount
 
@@ -66,6 +66,7 @@ class TradeCraftDataFile {
                 data.put(key, info);
             }
 
+            plugin.log.info("Loaded " + data.size() + " stores");
             reader.close();
         } catch (IOException e) {
             plugin.log.warning("Error reading " + fileName);

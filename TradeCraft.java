@@ -45,6 +45,12 @@ public class TradeCraft extends Plugin {
                 listener,
                 this,
                 PluginListener.Priority.MEDIUM);
+
+        etc.getLoader().addListener(
+                PluginLoader.Hook.BLOCK_DESTROYED,
+                listener,
+                this,
+                PluginListener.Priority.MEDIUM);
     }
 
     void sendMessage(Player player, String format, Object... args) {

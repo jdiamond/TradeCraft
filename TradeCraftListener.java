@@ -11,25 +11,76 @@ class TradeCraftListener extends PluginListener {
             Block blockClicked,
             Item itemInHand) {
 
-        if (blockClicked.getType() != TradeCraft.WALL_SIGN) {
+        TradeCraftStore store = getStoreFromSignBlock(blockClicked);
+
+        if (store == null) {
             return;
         }
 
-        int x = blockClicked.getX();
-        int y = blockClicked.getY();
-        int z = blockClicked.getZ();
+        if (store.merchantName != null && player.getName().equals(store.merchantName)) {
+            handleMerchantClick(player, store);
+        } else {
+            handlePatronClick(player, store);
+        }
+
+        return;
+    }
+
+    public boolean onBlockDestroy(Player player, Block block) {
+        TradeCraftStore store = getStore(block);
+
+        if (store == null) {
+            return false;
+        }
+
+        if (store.merchantName == null) {
+            return false;
+        }
+
+        if (store.merchantName.equals(player.getName())) {
+            // TODO: Don't let them destroy their own store unless they withdraw everything!
+            return false;
+        }
+
+        // This sign or chest is part of a store that belongs to another player.
+        // Don't let the current player destroy it.
+        return true;
+    }
+
+    private TradeCraftStore getStore(Block block) {
+        if (block.getType() == TradeCraft.CHEST) {
+            block = plugin.server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
+        }
+
+        return getStoreFromSignBlock(block);
+    }
+
+    private TradeCraftStore getStoreFromSignBlock(Block block) {
+        if (block.getType() != TradeCraft.WALL_SIGN) {
+            return null;
+        }
+
+        int x = block.getX();
+        int y = block.getY();
+        int z = block.getZ();
 
         Sign sign = (Sign)plugin.server.getComplexBlock(x, y, z);
+
+        // The sign at this location can be null if it was just destroyed.
+        if (sign == null) {
+            return null;
+        }
+
         TradeCraftConfigurationInfo tradeInfo = getConfigurationInfo(sign);
 
         if (tradeInfo == null) {
-            return;
+            return null;
         }
 
-        Block block = (Block)plugin.server.getBlockAt(x, y - 1, z);
+        Block blockBelowSign = plugin.server.getBlockAt(x, y - 1, z);
 
-        if (block.getType() != TradeCraft.CHEST) {
-            return;
+        if (blockBelowSign.getType() != TradeCraft.CHEST) {
+            return null;
         }
 
         Chest chest = (Chest)plugin.server.getComplexBlock(x, y - 1, z);
@@ -37,13 +88,14 @@ class TradeCraftListener extends PluginListener {
 
         String merchantName = getMerchantName(sign);
 
-        if (merchantName != null && player.getName().equals(merchantName)) {
-            handleMerchantClick(player, x, y, z, tradeInfo, chest, chestInfo, merchantName);
-        } else {
-            handlePatronClick(player, tradeInfo, chest, chestInfo);
-        }
+        TradeCraftStore store = new TradeCraftStore();
+        store.sign = sign;
+        store.configurationInfo = tradeInfo;
+        store.chest = chest;
+        store.chestInfo = chestInfo;
+        store.merchantName = merchantName;
 
-        return;
+        return store;
     }
 
     private TradeCraftConfigurationInfo getConfigurationInfo(Sign sign) {
@@ -72,91 +124,84 @@ class TradeCraftListener extends PluginListener {
         return null;
     }
 
-    private void handleMerchantClick(
-            Player player,
-            int x, int y, int z,
-            TradeCraftConfigurationInfo tradeInfo,
-            Chest chest,
-            TradeCraftChestInfo chestInfo,
-            String merchantName) {
-
-        if (!chestInfo.containsOnlyOneItemType()) {
+    private void handleMerchantClick(Player player, TradeCraftStore store) {
+        if (!store.chestInfo.containsOnlyOneItemType()) {
             plugin.sendMessage(player, "The chest has more than one type of item in it!");
             return;
         }
 
-        if (chestInfo.total == 0) {
+        int x = store.sign.getX();
+        int y = store.sign.getY();
+        int z = store.sign.getZ();
+
+        if (store.chestInfo.total == 0) {
             int goldAmount = plugin.data.withdrawGold(x, y, z);
             if (goldAmount > 0) {
-                populateChest(chest, TradeCraft.GOLD_INGOT, goldAmount);
+                populateChest(store.chest, TradeCraft.GOLD_INGOT, goldAmount);
                 plugin.sendMessage(player, "Withdrew %1$d Gold.", goldAmount);
             } else {
                 int itemAmount = plugin.data.withdraw(x, y, z);
                 if (itemAmount > 0) {
-                    populateChest(chest, tradeInfo.id, itemAmount);
-                    plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
+                    populateChest(store.chest, store.configurationInfo.id, itemAmount);
+                    plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, store.configurationInfo.name);
                 } else {
                     plugin.sendMessage(player, "There is nothing to withdraw.");
                 }
             }
-        } else if (chestInfo.id == TradeCraft.GOLD_INGOT) {
-            plugin.data.depositGold(x, y, z, chestInfo.total);
-            plugin.sendMessage(player, "Deposited %1$d Gold.", chestInfo.total);
-            populateChest(chest, 0, 0);
+        } else if (store.chestInfo.id == TradeCraft.GOLD_INGOT) {
+            plugin.data.depositGold(x, y, z, store.chestInfo.total);
+            plugin.sendMessage(player, "Deposited %1$d Gold.", store.chestInfo.total);
+            populateChest(store.chest, 0, 0);
             int itemAmount = plugin.data.withdraw(x, y, z);
             if (itemAmount > 0) {
-                populateChest(chest, tradeInfo.id, itemAmount);
-                plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, tradeInfo.name);
+                populateChest(store.chest, store.configurationInfo.id, itemAmount);
+                plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, store.configurationInfo.name);
             }
-        } else if (chestInfo.id == tradeInfo.id) {
-            plugin.data.deposit(x, y, z, chestInfo.total);
-            populateChest(chest, 0, 0);
-            plugin.sendMessage(player, "Deposited %1$d %2$s.", chestInfo.total, tradeInfo.name);
+        } else if (store.chestInfo.id == store.configurationInfo.id) {
+            plugin.data.deposit(x, y, z, store.chestInfo.total);
+            populateChest(store.chest, 0, 0);
+            plugin.sendMessage(player, "Deposited %1$d %2$s.", store.chestInfo.total, store.configurationInfo.name);
         } else {
             plugin.sendMessage(player, "You can't deposit that here!");
         }
     }
 
-    private void handlePatronClick(
-            Player player,
-            TradeCraftConfigurationInfo tradeInfo,
-            Chest chest,
-            TradeCraftChestInfo chestInfo) {
-
-        if (chestInfo.total == 0) {
-            if (tradeInfo.buyAmount != 0) {
+    private void handlePatronClick(Player player, TradeCraftStore store) {
+        if (store.chestInfo.total == 0) {
+            if (store.configurationInfo.buyAmount != 0) {
                 plugin.sendMessage(player,
                         "You can buy %1$d %2$s items for %3$d gold.",
-                        tradeInfo.buyAmount,
-                        tradeInfo.name,
-                        tradeInfo.buyValue);
+                        store.configurationInfo.buyAmount,
+                        store.configurationInfo.name,
+                        store.configurationInfo.buyValue);
             }
 
-            if (tradeInfo.sellAmount != 0) {
+            if (store.configurationInfo.sellAmount != 0) {
                 plugin.sendMessage(player,
                         "You can sell %1$d %2$s items for %3$d gold.",
-                        tradeInfo.sellAmount,
-                        tradeInfo.name,
-                        tradeInfo.sellValue);
+                        store.configurationInfo.sellAmount,
+                        store.configurationInfo.name,
+                        store.configurationInfo.sellValue);
             }
 
             plugin.sendMessage(player, "The chest is empty.");
             return;
         }
 
-        if (!chestInfo.containsOnlyOneItemType()) {
+        if (!store.chestInfo.containsOnlyOneItemType()) {
             plugin.sendMessage(player, "The chest has more than one type of item in it!");
             return;
         }
 
-        if (chestInfo.id == TradeCraft.GOLD_INGOT) {
-            makePurchase(player, tradeInfo, chestInfo, chest);
-        } else if (chestInfo.id == tradeInfo.id) {
-            makeSale(player, tradeInfo, chestInfo, chest);
+        if (store.chestInfo.id == TradeCraft.GOLD_INGOT) {
+            makePurchase(player, store.configurationInfo, store.chestInfo, store.chest);
+        } else if (store.chestInfo.id == store.configurationInfo.id) {
+            makeSale(player, store.configurationInfo, store.chestInfo, store.chest);
         } else {
             plugin.sendMessage(player, "You can't sell that here!");
         }
     }
+
 
     private void makePurchase(
             Player player,
@@ -187,6 +232,7 @@ class TradeCraftListener extends PluginListener {
         populateChest(chest, tradeInfo.id, totalItems);
     }
 
+
     private void makeSale(
             Player player,
             TradeCraftConfigurationInfo tradeInfo,
@@ -216,6 +262,7 @@ class TradeCraftListener extends PluginListener {
 
         populateChest(chest, TradeCraft.GOLD_INGOT, totalValue);
     }
+
 
     private void populateChest(Chest chest, int id, int amount) {
         chest.clearContents();
