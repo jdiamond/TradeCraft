@@ -56,51 +56,30 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
     }
 
     public int getItemsInStore() {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        return plugin.data.getItemAmount(x, y, z);
+        return plugin.data.getItemAmount(sign);
     }
 
     public int getGoldInStore() {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        return plugin.data.getGoldAmount(x, y, z);
+        return plugin.data.getGoldAmount(sign);
     }
 
     public void depositItems(int amount) {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        plugin.data.depositItems(x, y, z, amount);
+        plugin.data.depositItems(sign, amount);
     }
 
     public void depositGold(int amount) {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        plugin.data.depositGold(x, y, z, amount);
+        plugin.data.depositGold(sign, amount);
     }
 
     public int withdrawItems() {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        return plugin.data.withdrawItems(x, y, z);
+        return plugin.data.withdrawItems(sign);
     }
 
     public int withdrawGold() {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        return plugin.data.withdrawGold(x, y, z);
+        return plugin.data.withdrawGold(sign);
     }
 
     public void updateItemAndGoldAmounts(int itemAdjustment, int goldAdjustment) {
-        int x = sign.getX();
-        int y = sign.getY();
-        int z = sign.getZ();
-        plugin.data.updateItemAndGoldAmounts(x, y, z, itemAdjustment, goldAdjustment);
+        plugin.data.updateItemAndGoldAmounts(sign, itemAdjustment, goldAdjustment);
     }
 }
