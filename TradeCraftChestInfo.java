@@ -3,9 +3,8 @@ class TradeCraftChestInfo {
     public int total;
 
     public TradeCraftChestInfo(Chest chest) {
-        for (hn realItem : chest.getArray()) {
-            if (realItem != null) {
-                Item item = new Item(realItem);
+        for (Item item : chest.getContents()) {
+            if (item != null) {
                 addItem(item);
             }
         }
