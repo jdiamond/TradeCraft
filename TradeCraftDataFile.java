@@ -12,10 +12,16 @@ import java.util.regex.Pattern;
 class TradeCraftDataFile {
 
 	private static final String fileName = TradeCraft.pluginName + ".data";
-    private static final Pattern infoPattern = Pattern.compile(
+    private static final Pattern infoPattern1 = Pattern.compile(
             "^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)" + // x,y,z
             "\\s*=\\s*" +
             "(\\d+)\\s*,\\s*(\\d+)\\s*$"); // itemAmount,goldAmount
+    private static final Pattern infoPattern2 = Pattern.compile(
+            "^\\s*([^,]+)\\s*," + // ownerName
+            "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
+            "\\s*(\\d+)\\s*," + // itemType
+            "\\s*(\\d+)\\s*," + // itemAmount
+            "\\s*(\\d+)\\s*$"); // goldAmount
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftDataInfo> data = new HashMap<String, TradeCraftDataInfo>();
@@ -41,29 +47,52 @@ class TradeCraftDataFile {
             while ((line = reader.readLine()) != null) {
                 lineNumber += 1;
 
-                Matcher infoMatcher = infoPattern.matcher(line);
+                Matcher infoMatcher2 = infoPattern2.matcher(line);
 
-                if (!infoMatcher.matches()) {
-                    plugin.log.warning(
-                            "Failed to parse line number " + lineNumber +
-                            " in " + fileName +
-                            ": " + line);
-                    continue;
+                if (infoMatcher2.matches()) {
+                    String ownerName = infoMatcher2.group(1);
+                    int x = Integer.parseInt(infoMatcher2.group(2));
+                    int y = Integer.parseInt(infoMatcher2.group(3));
+                    int z = Integer.parseInt(infoMatcher2.group(4));
+                    int itemType = Integer.parseInt(infoMatcher2.group(5));
+                    int itemAmount = Integer.parseInt(infoMatcher2.group(6));
+                    int goldAmount = Integer.parseInt(infoMatcher2.group(7));
+
+                    String key = getKey(x, y, z);
+
+                    TradeCraftDataInfo info = new TradeCraftDataInfo();
+                    info.ownerName = ownerName;
+                    info.itemType = itemType;
+                    info.itemAmount = itemAmount;
+                    info.goldAmount = goldAmount;
+
+                    data.put(key, info);
+                } else {
+                    Matcher infoMatcher1 = infoPattern1.matcher(line);
+
+                    if (!infoMatcher1.matches()) {
+                        plugin.log.warning(
+                                "Failed to parse line number " + lineNumber +
+                                " in " + fileName +
+                                ": " + line);
+                        continue;
+                    }
+
+                    int x = Integer.parseInt(infoMatcher1.group(1));
+                    int y = Integer.parseInt(infoMatcher1.group(2));
+                    int z = Integer.parseInt(infoMatcher1.group(3));
+                    int itemAmount = Integer.parseInt(infoMatcher1.group(4));
+                    int goldAmount = Integer.parseInt(infoMatcher1.group(5));
+
+                    String key = getKey(x, y, z);
+
+                    TradeCraftDataInfo info = new TradeCraftDataInfo();
+                    info.ownerName = "unknown";
+                    info.itemAmount = itemAmount;
+                    info.goldAmount = goldAmount;
+
+                    data.put(key, info);
                 }
-
-                int x = Integer.parseInt(infoMatcher.group(1));
-                int y = Integer.parseInt(infoMatcher.group(2));
-                int z = Integer.parseInt(infoMatcher.group(3));
-                int itemAmount = Integer.parseInt(infoMatcher.group(4));
-                int goldAmount = Integer.parseInt(infoMatcher.group(5));
-
-                String key = getKey(x, y, z);
-
-                TradeCraftDataInfo info = new TradeCraftDataInfo();
-                info.itemAmount = itemAmount;
-                info.goldAmount = goldAmount;
-
-                data.put(key, info);
             }
 
             plugin.log.info("Loaded " + data.size() + " stores");
@@ -79,7 +108,11 @@ class TradeCraftDataFile {
 
             for (String key : data.keySet()) {
                 TradeCraftDataInfo info = data.get(key);
-                writer.write(key + "=" + info.itemAmount + "," + info.goldAmount);
+                writer.write(info.ownerName + "," +
+                             key + "," +
+                             info.itemType + "," +
+                             info.itemAmount + "," +
+                             info.goldAmount);
                 writer.newLine();
             }
 
@@ -107,26 +140,32 @@ class TradeCraftDataFile {
         return 0;
     }
 
-    public synchronized void depositItems(Sign sign, int itemAmount) {
+    public synchronized void depositItems(String ownerName, Sign sign, int itemType, int itemAmount) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
+            info.ownerName = ownerName; // For old entries that don't have the name.
+            info.itemType = itemType; // For old entries that don't have the type.
             info.itemAmount += itemAmount;
         } else {
             TradeCraftDataInfo info = new TradeCraftDataInfo();
+            info.ownerName = ownerName;
+            info.itemType = itemType;
             info.itemAmount = itemAmount;
             data.put(key, info);
         }
         save();
     }
 
-    public synchronized void depositGold(Sign sign, int goldAmount) {
+    public synchronized void depositGold(String ownerName, Sign sign, int goldAmount) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
+            info.ownerName = ownerName; // For old entries that don't have the name.
             info.goldAmount += goldAmount;
         } else {
             TradeCraftDataInfo info = new TradeCraftDataInfo();
+            info.ownerName = ownerName;
             info.goldAmount = goldAmount;
             data.put(key, info);
         }

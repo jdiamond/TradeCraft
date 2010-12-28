@@ -64,11 +64,11 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
     }
 
     public void depositItems(int amount) {
-        plugin.data.depositItems(sign, amount);
+        plugin.data.depositItems(ownerName, sign, itemType, amount);
     }
 
     public void depositGold(int amount) {
-        plugin.data.depositGold(sign, amount);
+        plugin.data.depositGold(ownerName, sign, amount);
     }
 
     public int withdrawItems() {
