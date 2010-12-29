@@ -32,7 +32,7 @@ class TradeCraftDataFile {
 
     public synchronized void load() {
         if (!new File(fileName).exists()) {
-            plugin.log.warning("No " + fileName + " file to read");
+            plugin.log.info("No " + fileName + " file to read");
             return;
         }
 
@@ -118,7 +118,7 @@ class TradeCraftDataFile {
 
             writer.close();
         } catch (IOException e) {
-            plugin.log.warning("error writing " + fileName);
+            plugin.log.warning("Error writing " + fileName);
         }
     }
 
@@ -174,6 +174,9 @@ class TradeCraftDataFile {
 
     public synchronized int withdrawItems(Sign sign) {
         String key = getKeyFromSign(sign);
+        if (!data.containsKey(key)) {
+            return 0;
+        }
         TradeCraftDataInfo info = data.get(key);
         int itemAmount = info.itemAmount;
         if (itemAmount != 0) {
@@ -185,6 +188,9 @@ class TradeCraftDataFile {
 
     public synchronized int withdrawGold(Sign sign) {
         String key = getKeyFromSign(sign);
+        if (!data.containsKey(key)) {
+            return 0;
+        }
         TradeCraftDataInfo info = data.get(key);
         int goldAmount = info.goldAmount;
         if (goldAmount != 0) {
@@ -196,6 +202,9 @@ class TradeCraftDataFile {
 
     public synchronized void updateItemAndGoldAmounts(Sign sign, int itemAdjustment, int goldAdjustment) {
         String key = getKeyFromSign(sign);
+        if (!data.containsKey(key)) {
+            return;
+        }
         TradeCraftDataInfo info = data.get(key);
         info.itemAmount += itemAdjustment;
         info.goldAmount += goldAdjustment;
