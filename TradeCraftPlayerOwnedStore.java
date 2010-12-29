@@ -19,6 +19,10 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
         return isOwnedByPlayer(player);
     }
 
+    public boolean storeCanBeWithdrawnFrom() {
+        return getItemsInStore() > 0 || getGoldInStore() > 0;
+    }
+
     public boolean isOwnedByPlayer(Player player) {
         return ownerName != null && player.getName().equals(ownerName);
     }

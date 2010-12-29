@@ -12,6 +12,10 @@ public class TradeCraftInfiniteStore extends TradeCraftStore {
         return true;
     }
 
+    public boolean storeCanBeWithdrawnFrom() {
+        return false;
+    }
+
     public boolean isOwnedByPlayer(Player player) {
         return false;
     }

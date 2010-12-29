@@ -178,6 +178,8 @@ public abstract class TradeCraftStore {
 
     public abstract boolean playerCanDestroy(Player player);
 
+    public abstract boolean storeCanBeWithdrawnFrom();
+
     public abstract boolean isOwnedByPlayer(Player player);
 
     public abstract int getItemType();

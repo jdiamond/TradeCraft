@@ -24,7 +24,7 @@ class TradeCraftListener extends PluginListener {
         }
 
         if (store.playerCanDestroy(player)) {
-            if (store.getItemsInStore() == 0 && store.getGoldInStore() == 0) {
+            if (!store.storeCanBeWithdrawnFrom()) {
                 return false;
             }
  
