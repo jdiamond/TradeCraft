@@ -157,4 +157,18 @@ public class TradeCraft extends Plugin {
 
         return rate;
     }
+
+    static int getMaxStackSize(int itemType) {
+        switch (Item.Type.fromId(itemType)) {
+        case Apple:
+        case Bread:
+        case GoldenApple:
+        case GrilledPork:
+        case Pork:
+           return 1;
+        case SnowBall:
+            return 16;
+        }
+        return MAX_STACK_SIZE;
+    }
 }

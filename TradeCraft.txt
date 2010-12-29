@@ -12,4 +12,5 @@ Clay,       337,  2:1
 Iron,       265,  1:4
 Obsidian,    49,  1:32
 Diamond,    264,  1:64
+Bread,      297,  4:1
 

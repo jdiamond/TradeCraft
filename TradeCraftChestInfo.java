@@ -28,13 +28,14 @@ class TradeCraftChestInfo {
     public void populateChest(int id, int amount) {
         chest.clearContents();
 
-        int blocks = amount / TradeCraft.MAX_STACK_SIZE;
+        int maxStackSize = TradeCraft.getMaxStackSize(id);
+        int blocks = amount / maxStackSize;
 
         for (int i = 0; i < blocks; i++) {
-            chest.addItem(new Item(id, TradeCraft.MAX_STACK_SIZE));
+            chest.addItem(new Item(id, maxStackSize));
         }
 
-        int remainder = amount % TradeCraft.MAX_STACK_SIZE;
+        int remainder = amount % maxStackSize;
 
         if (remainder > 0) {
             chest.addItem(new Item(id, remainder));
