@@ -26,7 +26,7 @@ public abstract class TradeCraftStore {
         if (getChestItemCount() == 0) {
             int goldAmount = withdrawGold();
             if (goldAmount > 0) {
-                populateChest(TradeCraft.GOLD_INGOT, goldAmount);
+                populateChest(Item.Type.GoldIngot.getId(), goldAmount);
                 plugin.sendMessage(player, "Withdrew %1$d gold.", goldAmount);
             } else {
                 int itemAmount = withdrawItems();
@@ -37,7 +37,7 @@ public abstract class TradeCraftStore {
                     plugin.sendMessage(player, "There is nothing to withdraw.");
                 }
             }
-        } else if (getChestItemType() == TradeCraft.GOLD_INGOT) {
+        } else if (getChestItemType() == Item.Type.GoldIngot.getId()) {
             depositGold(getChestItemCount());
             plugin.sendMessage(player, "Deposited %1$d gold.", getChestItemCount());
             populateChest(0, 0);
@@ -82,7 +82,7 @@ public abstract class TradeCraftStore {
             return;
         }
 
-        if (getChestItemType() == TradeCraft.GOLD_INGOT) {
+        if (getChestItemType() == Item.Type.GoldIngot.getId()) {
             playerWantsToBuy(player);
         } else if (getChestItemType() == getItemType()) {
             playerWantsToSell(player);
@@ -151,7 +151,7 @@ public abstract class TradeCraftStore {
         }
 
         updateItemAndGoldAmounts(amountPlayerWantsToSell, -goldPlayerShouldReceive);
-        populateChest(TradeCraft.GOLD_INGOT, goldPlayerShouldReceive);
+        populateChest(Item.Type.GoldIngot.getId(), goldPlayerShouldReceive);
 
         plugin.sendMessage(player,
                     "You sold %1$d %2$s for %3$d gold.",

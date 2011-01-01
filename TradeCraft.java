@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    private static final String version = "132.5";
+    private static final String version = "132.5+";
 
     // Stuff used to interact with the server.
     final Logger log = Logger.getLogger("Minecraft");
@@ -20,12 +20,6 @@ public class TradeCraft extends Plugin {
     final TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(this);
     final TradeCraftDataFile data = new TradeCraftDataFile(this);
     private final TradeCraftListener listener = new TradeCraftListener(this);
-
-    // Some data value constants.
-    static final int CHEST = 54;
-    static final int WALL_SIGN = 68;
-    static final int GOLD_INGOT = 266;
-    static final int MIXED = -1;
 
     // The maximum number of items that can be stacked in one slot.
     static final int MAX_STACK_SIZE = 64;
@@ -69,7 +63,7 @@ public class TradeCraft extends Plugin {
     }
 
     TradeCraftStore getStoreFromSignOrChestBlock(Block block) {
-        if (block.getType() == TradeCraft.CHEST) {
+        if (block.getType() == Block.Type.Chest.getType()) {
             block = server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         }
 
@@ -77,7 +71,7 @@ public class TradeCraft extends Plugin {
     }
 
     TradeCraftStore getStoreFromSignBlock(Block block) {
-        if (block.getType() != TradeCraft.WALL_SIGN) {
+        if (block.getType() != Block.Type.WallSign.getType()) {
             return null;
         }
 
@@ -104,7 +98,7 @@ public class TradeCraft extends Plugin {
 
         Block blockBelowSign = server.getBlockAt(x, y - 1, z);
 
-        if (blockBelowSign.getType() != TradeCraft.CHEST) {
+        if (blockBelowSign.getType() != Block.Type.Chest.getType()) {
             return null;
         }
 

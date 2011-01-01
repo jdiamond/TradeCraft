@@ -16,13 +16,13 @@ class TradeCraftChestInfo {
         if (total == 0) {
             id = item.getItemId();
         } else if (id != item.getItemId()) {
-            id = TradeCraft.MIXED;
+            id = -1;
         }
         total += item.getAmount();
     }
 
     public boolean containsOnlyOneItemType() {
-        return id != TradeCraft.MIXED;
+        return id != -1;
     }
 
     public void populateChest(int id, int amount) {
