@@ -1,12 +1,12 @@
 public abstract class TradeCraftStore {
     protected final TradeCraft plugin;
     protected final Sign sign;
-    private final TradeCraftChestInfo chest;
+    private final TradeCraftChest chest;
 
     public TradeCraftStore(TradeCraft plugin, Sign sign, Chest chest) {
         this.plugin = plugin;
         this.sign = sign;
-        this.chest = new TradeCraftChestInfo(chest);
+        this.chest = new TradeCraftChest(chest);
     }
 
     public void handleRightClick(Player player) {

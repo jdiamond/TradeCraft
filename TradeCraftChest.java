@@ -1,9 +1,9 @@
-class TradeCraftChestInfo {
+class TradeCraftChest {
     private Chest chest;
     public int id;
     public int total;
 
-    public TradeCraftChestInfo(Chest chest) {
+    public TradeCraftChest(Chest chest) {
         this.chest = chest;
         for (Item item : chest.getContents()) {
             if (item != null) {
