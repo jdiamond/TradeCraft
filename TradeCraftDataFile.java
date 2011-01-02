@@ -122,6 +122,19 @@ class TradeCraftDataFile {
         }
     }
 
+    public synchronized void setOwnerOfSign(String ownerName, Sign sign) {
+        depositGold(ownerName, sign, 0);
+    }
+
+    public synchronized String getOwnerOfSign(Sign sign) {
+        String key = getKeyFromSign(sign);
+        if (data.containsKey(key)) {
+            TradeCraftDataInfo info = data.get(key);
+            return info.ownerName;
+        }
+        return null;
+    }
+
     public synchronized int getItemAmount(Sign sign) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {

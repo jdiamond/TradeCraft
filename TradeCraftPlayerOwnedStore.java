@@ -8,7 +8,7 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
     public TradeCraftPlayerOwnedStore(TradeCraft plugin, Sign sign, Chest chest) {
         super(plugin, sign, chest);
 
-        ownerName = plugin.getOwnerName(sign);
+        ownerName = plugin.data.getOwnerOfSign(sign);
         itemName = plugin.getItemName(sign);
         itemType = plugin.configuration.get(itemName).id;
         buyRate = plugin.getExchangeRate(sign, 1);

@@ -93,7 +93,14 @@ selling items from that store. The "Buy for" and "Sell for" prefixes on both of
 those lines is optional. Either line can be empty to disable buying or selling
 at that store.
 
-The last line is the name of the player. It must be surrounded with dashes.
+The last line is the name of the player. It must be surrounded with dashes. If
+the player's name is too long to fit on the line with the dashes, the player
+can use any number of characters that will fit, but those characters have to
+be part of their name. For example, if the player's name was
+"NumberOneMinecraftFan", they could use "-NumberOne-" as the name on the sign.
+
+TODO: Allow administrators to set aliases or nicknames for players for use on
+signs.
 
 Players are not allowed to create signs that contain other players' names.
 Likewise, players are not allowed to destroy signs (or the chests underneath

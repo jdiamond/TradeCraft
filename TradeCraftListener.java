@@ -45,7 +45,8 @@ class TradeCraftListener extends PluginListener {
             return false;
         }
 
-        if (ownerName.equals(player.getName())) {
+        if (player.getName().startsWith(ownerName)) {
+            plugin.data.setOwnerOfSign(player.getName(), sign);
             return false;
         }
 
@@ -55,5 +56,4 @@ class TradeCraftListener extends PluginListener {
 
         return true;
     }
-
 }
