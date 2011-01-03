@@ -12,6 +12,8 @@ public class TradeCraft extends Plugin {
     // A "+" at the end means this is a development version that hasn't been released yet.
     private static final String version = "132.6+";
 
+    private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
+
     // Stuff used to interact with the server.
     final Logger log = Logger.getLogger("Minecraft");
     final Server server = etc.getServer();
@@ -20,11 +22,6 @@ public class TradeCraft extends Plugin {
     final TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(this);
     final TradeCraftDataFile data = new TradeCraftDataFile(this);
     private final TradeCraftListener listener = new TradeCraftListener(this);
-
-    // The maximum number of items that can be stacked in one slot.
-    static final int MAX_STACK_SIZE = 64;
-
-    private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
     public void enable() {
     }
@@ -155,14 +152,59 @@ public class TradeCraft extends Plugin {
     static int getMaxStackSize(int itemType) {
         switch (Item.Type.fromId(itemType)) {
         case Apple:
-        case Bread:
         case GoldenApple:
-        case GrilledPork:
         case Pork:
+        case GrilledPork:
+        case Bread:
+        case Bucket:
+        case WaterBucket:
+        case LavaBucket:
+        case MilkBucket:
+        case WoodSword:
+        case WoodSpade:
+        case WoodPickaxe:
+        case WoodAxe:
+        case WoodHoe:
+        case StoneSword:
+        case StoneSpade:
+        case StonePickaxe:
+        case StoneAxe:
+        case StoneHoe:
+        case IronSword:
+        case IronSpade:
+        case IronPickaxe:
+        case IronAxe:
+        case IronHoe:
+        case DiamondSword:
+        case DiamondSpade:
+        case DiamondPickaxe:
+        case DiamondAxe:
+        case DiamondHoe:
+        case GoldSword:
+        case GoldSpade:
+        case GoldPickaxe:
+        case GoldAxe:
+        case GoldHoe:
+        case LeatherHelmet:
+        case LeatherChestplate:
+        case LeatherLeggings:
+        case LeatherBoots:
+        case IronHelmet:
+        case IronChestplate:
+        case IronLeggings:
+        case IronBoots:
+        case DiamondHelmet:
+        case DiamondChestplate:
+        case DiamondLeggings:
+        case DiamondBoots:
+        case GoldHelmet:
+        case GoldChestplate:
+        case GoldLeggings:
+        case GoldBoots:
            return 1;
         case SnowBall:
             return 16;
         }
-        return MAX_STACK_SIZE;
+        return 64;
     }
 }
