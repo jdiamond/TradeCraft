@@ -7,24 +7,24 @@ class TradeCraftListener extends PluginListener {
     }
 
     public void onBlockRightClicked(Player player, Block blockClicked, Item itemInHand) {
-        TradeCraftStore store = plugin.getStoreFromSignBlock(blockClicked);
+        TradeCraftShop shop = plugin.getShopFromSignBlock(blockClicked);
 
-        if (store == null) {
+        if (shop == null) {
             return;
         }
 
-        store.handleRightClick(player);
+        shop.handleRightClick(player);
     }
 
     public boolean onBlockBreak(Player player, Block block) {
-        TradeCraftStore store = plugin.getStoreFromSignOrChestBlock(block);
+        TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(block);
 
-        if (store == null) {
+        if (shop == null) {
             return false;
         }
 
-        if (store.playerCanDestroy(player)) {
-            if (!store.storeCanBeWithdrawnFrom()) {
+        if (shop.playerCanDestroy(player)) {
+            if (!shop.shopCanBeWithdrawnFrom()) {
                 return false;
             }
  

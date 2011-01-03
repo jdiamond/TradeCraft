@@ -1,7 +1,7 @@
-public class TradeCraftInfiniteStore extends TradeCraftStore {
+public class TradeCraftInfiniteShop extends TradeCraftShop {
     private final TradeCraftConfigurationInfo configurationInfo;
 
-    public TradeCraftInfiniteStore(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) {
         super(plugin, sign, chest);
 
         String itemName = plugin.getItemName(sign);
@@ -12,7 +12,7 @@ public class TradeCraftInfiniteStore extends TradeCraftStore {
         return true;
     }
 
-    public boolean storeCanBeWithdrawnFrom() {
+    public boolean shopCanBeWithdrawnFrom() {
         return false;
     }
 
@@ -52,11 +52,11 @@ public class TradeCraftInfiniteStore extends TradeCraftStore {
         return configurationInfo.sellValue;
     }
 
-    public int getItemsInStore() {
+    public int getItemsInShop() {
         return Integer.MAX_VALUE;
     }
 
-    public int getGoldInStore() {
+    public int getGoldInShop() {
         return Integer.MAX_VALUE;
     }
 

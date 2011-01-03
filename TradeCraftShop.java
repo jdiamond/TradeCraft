@@ -1,9 +1,9 @@
-public abstract class TradeCraftStore {
+public abstract class TradeCraftShop {
     protected final TradeCraft plugin;
     protected final Sign sign;
     private final TradeCraftChest chest;
 
-    public TradeCraftStore(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftShop(TradeCraft plugin, Sign sign, Chest chest) {
         this.plugin = plugin;
         this.sign = sign;
         this.chest = new TradeCraftChest(chest);
@@ -108,10 +108,10 @@ public abstract class TradeCraftStore {
             return;
         }
 
-        if (amountPlayerWantsToBuy > getItemsInStore()) {
+        if (amountPlayerWantsToBuy > getItemsInShop()) {
             plugin.sendMessage(player,
-                    "Cannot buy. This store only has %1$d %2$s.",
-                    getItemsInStore(),
+                    "Cannot buy. This shop only has %1$d %2$s.",
+                    getItemsInShop(),
                     getItemName());
             return;
         }
@@ -143,10 +143,10 @@ public abstract class TradeCraftStore {
             return;
         }
 
-        if (goldPlayerShouldReceive > getGoldInStore()) {
+        if (goldPlayerShouldReceive > getGoldInShop()) {
             plugin.sendMessage(player,
-                    "Cannot sell. This store only has %1$d gold.",
-                    getGoldInStore());
+                    "Cannot sell. This shop only has %1$d gold.",
+                    getGoldInShop());
             return;
         }
 
@@ -178,7 +178,7 @@ public abstract class TradeCraftStore {
 
     public abstract boolean playerCanDestroy(Player player);
 
-    public abstract boolean storeCanBeWithdrawnFrom();
+    public abstract boolean shopCanBeWithdrawnFrom();
 
     public abstract boolean isOwnedByPlayer(Player player);
 
@@ -198,9 +198,9 @@ public abstract class TradeCraftStore {
 
     public abstract int getSellValue();
 
-    public abstract int getItemsInStore();
+    public abstract int getItemsInShop();
 
-    public abstract int getGoldInStore();
+    public abstract int getGoldInShop();
 
     public abstract void depositItems(int amount);
 

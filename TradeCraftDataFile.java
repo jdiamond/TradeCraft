@@ -95,7 +95,7 @@ class TradeCraftDataFile {
                 }
             }
 
-            plugin.log.info("Loaded " + data.size() + " stores");
+            plugin.log.info("Loaded " + data.size() + " shops");
             reader.close();
         } catch (IOException e) {
             plugin.log.warning("Error reading " + fileName);

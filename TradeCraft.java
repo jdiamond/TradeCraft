@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    private static final String version = "132.6";
+    private static final String version = "132.6+";
 
     // Stuff used to interact with the server.
     final Logger log = Logger.getLogger("Minecraft");
@@ -62,15 +62,15 @@ public class TradeCraft extends Plugin {
         player.sendMessage(message);
     }
 
-    TradeCraftStore getStoreFromSignOrChestBlock(Block block) {
+    TradeCraftShop getShopFromSignOrChestBlock(Block block) {
         if (block.getType() == Block.Type.Chest.getType()) {
             block = server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         }
 
-        return getStoreFromSignBlock(block);
+        return getShopFromSignBlock(block);
     }
 
-    TradeCraftStore getStoreFromSignBlock(Block block) {
+    TradeCraftShop getShopFromSignBlock(Block block) {
         if (block.getType() != Block.Type.WallSign.getType()) {
             return null;
         }
@@ -104,15 +104,15 @@ public class TradeCraft extends Plugin {
 
         Chest chest = (Chest)server.getComplexBlock(x, y - 1, z);
 
-        TradeCraftStore store;
+        TradeCraftShop shop;
 
         if (getOwnerName(sign) == null) {
-            store = new TradeCraftInfiniteStore(this, sign, chest);
+            shop = new TradeCraftInfiniteShop(this, sign, chest);
         } else {
-            store = new TradeCraftPlayerOwnedStore(this, sign, chest);
+            shop = new TradeCraftPlayerOwnedShop(this, sign, chest);
         }
 
-        return store;
+        return shop;
     }
 
     String getItemName(Sign sign) {

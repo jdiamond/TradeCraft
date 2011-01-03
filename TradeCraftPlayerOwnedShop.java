@@ -1,11 +1,11 @@
-public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
+public class TradeCraftPlayerOwnedShop extends TradeCraftShop {
     private final String ownerName;
     private final String itemName;
     private final int itemType;
     private final TradeCraftExchangeRate buyRate;
     private final TradeCraftExchangeRate sellRate;
 
-    public TradeCraftPlayerOwnedStore(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftPlayerOwnedShop(TradeCraft plugin, Sign sign, Chest chest) {
         super(plugin, sign, chest);
 
         ownerName = plugin.data.getOwnerOfSign(sign);
@@ -19,8 +19,8 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
         return isOwnedByPlayer(player);
     }
 
-    public boolean storeCanBeWithdrawnFrom() {
-        return getItemsInStore() > 0 || getGoldInStore() > 0;
+    public boolean shopCanBeWithdrawnFrom() {
+        return getItemsInShop() > 0 || getGoldInShop() > 0;
     }
 
     public boolean isOwnedByPlayer(Player player) {
@@ -59,11 +59,11 @@ public class TradeCraftPlayerOwnedStore extends TradeCraftStore {
         return sellRate.value;
     }
 
-    public int getItemsInStore() {
+    public int getItemsInShop() {
         return plugin.data.getItemAmount(sign);
     }
 
-    public int getGoldInStore() {
+    public int getGoldInShop() {
         return plugin.data.getGoldAmount(sign);
     }
 
