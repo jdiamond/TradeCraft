@@ -39,10 +39,27 @@ class TradeCraftListener extends PluginListener {
     }
 
     public boolean onSignChange(Player player, Sign sign) {
+plugin.log.info("onSignChange");
         String ownerName = plugin.getOwnerName(sign);
 
         if (ownerName == null) {
-            return false;
+            String itemName = plugin.getItemName(sign);
+
+            if (itemName == null) {
+                return false;
+            }
+
+            if (!plugin.properties.getAdminRequiredToCreateInfiniteShops()) {
+                return false;
+            }
+plugin.log.info("admin required");
+            if (player.isAdmin()) {
+                return false;
+            }
+
+            plugin.sendMessage(player, "Only administrators can create infinite shops!");
+
+            return true;
         }
 
         if (player.getName().startsWith(ownerName)) {
@@ -50,8 +67,6 @@ class TradeCraftListener extends PluginListener {
             return false;
         }
 
-        // The sign has some other player's name on it.
-        // Don't let the current player create it.
         plugin.sendMessage(player, "You can't create signs with other players names on them!");
 
         return true;

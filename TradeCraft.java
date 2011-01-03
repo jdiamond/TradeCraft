@@ -19,8 +19,10 @@ public class TradeCraft extends Plugin {
     final Server server = etc.getServer();
 
     // Objects used by the plugin.
+    final TradeCraftPropertiesFile properties = new TradeCraftPropertiesFile();
     final TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(this);
     final TradeCraftDataFile data = new TradeCraftDataFile(this);
+
     private final TradeCraftListener listener = new TradeCraftListener(this);
 
     public void enable() {
