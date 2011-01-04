@@ -39,7 +39,7 @@ class TradeCraftListener extends PluginListener {
     }
 
     public boolean onSignChange(Player player, Sign sign) {
-plugin.log.info("onSignChange");
+
         String ownerName = plugin.getOwnerName(sign);
 
         if (ownerName == null) {
@@ -49,17 +49,30 @@ plugin.log.info("onSignChange");
                 return false;
             }
 
-            if (!plugin.properties.getAdminRequiredToCreateInfiniteShops()) {
-                return false;
-            }
-plugin.log.info("admin required");
-            if (player.isAdmin()) {
+            String group = plugin.properties.getGroupRequiredToCreateInfiniteShops();
+
+            if (group.equals("*")) {
                 return false;
             }
 
-            plugin.sendMessage(player, "Only administrators can create infinite shops!");
+            if (player.isInGroup(group)) {
+                return false;
+            }
+
+            plugin.log.info("Player \"" + player.getName() + "\" is not in group \"" + group + "\"");
+            plugin.sendMessage(player, "You can't create infinite shops!");
 
             return true;
+        }
+
+        String group = plugin.properties.getGroupRequiredToCreatePlayerOwnedShops();
+
+        if (!group.equals("*")) {
+            if (!player.isInGroup(group)) {
+                plugin.log.info("Player \"" + player.getName() + "\" is not in group \"" + group + "\"");
+                plugin.sendMessage(player, "You can't create player-owned shops!");
+                return true;
+            }
         }
 
         if (player.getName().startsWith(ownerName)) {

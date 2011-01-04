@@ -106,8 +106,14 @@ public class TradeCraft extends Plugin {
         TradeCraftShop shop;
 
         if (getOwnerName(sign) == null) {
+            if (!properties.getInfiniteShopsEnabled()) {
+                return null;
+            }
             shop = new TradeCraftInfiniteShop(this, sign, chest);
         } else {
+            if (!properties.getPlayerOwnedShopsEnabled()) {
+                return null;
+            }
             shop = new TradeCraftPlayerOwnedShop(this, sign, chest);
         }
 

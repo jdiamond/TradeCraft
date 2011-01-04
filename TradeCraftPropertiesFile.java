@@ -6,7 +6,19 @@ public class TradeCraftPropertiesFile {
         propertiesFile = new PropertiesFile(TradeCraft.pluginName + ".properties");
     }
 
-    public boolean getAdminRequiredToCreateInfiniteShops() {
-        return propertiesFile.getBoolean("admin-required-to-create-infinite-shops", false);
+    public boolean getInfiniteShopsEnabled() {
+        return propertiesFile.getBoolean("infinite-shops-enabled", true);
+    }
+
+    public boolean getPlayerOwnedShopsEnabled() {
+        return propertiesFile.getBoolean("player-owned-shops-enabled", true);
+    }
+
+    public String getGroupRequiredToCreateInfiniteShops() {
+        return propertiesFile.getString("group-required-to-create-infinite-shops", "*");
+    }
+
+    public String getGroupRequiredToCreatePlayerOwnedShops() {
+        return propertiesFile.getString("group-required-to-create-player-owned-shops", "*");
     }
 }

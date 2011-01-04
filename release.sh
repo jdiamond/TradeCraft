@@ -1,1 +1,1 @@
-zip TradeCraft-xxx.zip TradeCraft.jar TradeCraft.txt README.txt
+zip TradeCraft-xxx.zip TradeCraft.jar TradeCraft.properties TradeCraft.txt README.txt
