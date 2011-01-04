@@ -1,0 +1,10 @@
+- Don't eat excess items or gold in the chest when buying or selling.
+- Allow players to use gold blocks in addition to gold ingots.
+- Allow admins to set properties for item and owner prefix/suffix characters.
+- Add property for changing currency type.
+- When displaying rates, also display number of stacks (if more than 1).
+- Configure more items in TradeCraft.txt.
+- Make the buy rate optional in TradeCraft.txt. Default to 0:0.
+- Owner interaction with player-owned stores should withdraw/deposit both items
+  and gold at the same time. If there's not enough room, it shouldn't lose the
+  excess.
