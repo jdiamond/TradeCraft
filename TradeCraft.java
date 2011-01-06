@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    private static final String version = "133.1";
+    static final String version = "133.1+";
 
     private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
@@ -54,6 +54,12 @@ public class TradeCraft extends Plugin {
                 listener,
                 this,
                 PluginListener.Priority.MEDIUM);
+
+        etc.getLoader().addListener(
+                PluginLoader.Hook.COMMAND,
+                listener,
+                this,
+                PluginListener.Priority.LOW);
     }
 
     void sendMessage(Player player, String format, Object... args) {

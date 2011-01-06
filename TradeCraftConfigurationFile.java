@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -74,6 +75,12 @@ class TradeCraftConfigurationFile {
         } catch (IOException e) {
             plugin.log.warning("Error reading " + fileName);
         }
+    }
+
+    public String[] getNames() {
+        String[] names = infos.keySet().toArray(new String[0]);
+        Arrays.sort(names);
+        return names;
     }
 
     public boolean isConfigured(String name) {

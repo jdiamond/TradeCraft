@@ -72,4 +72,56 @@ class TradeCraftListener extends PluginListener {
 
         return true;
     }
+
+    public boolean onCommand(Player player, String[] split) {
+        if (split[0].toLowerCase().equals("/tradecraft")) {
+            if (split.length == 1) {
+                plugin.sendMessage(player, "TradeCraft version %1$s", TradeCraft.version);
+                return true;
+            } else {
+                String command = split[1].toLowerCase();
+                if (command.equals("security")) {
+                    displaySecurity(player);
+                    return true;
+                } else if (command.equals("list")) {
+                    displayList(player);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void displaySecurity(Player player) {
+        plugin.sendMessage(player,
+                "Can create infinite shops: %s",
+                plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreateInfiniteShops()));
+        plugin.sendMessage(player,
+                "Can create player-owned shops: %s",
+                plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreatePlayerOwnedShops()));
+        plugin.sendMessage(player,
+                "Can buy from shops: %s",
+                plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToBuyFromShops()));
+        plugin.sendMessage(player,
+                "Can sell to shops: %s",
+                plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToSellToShops()));
+    }
+
+    private void displayList(Player player) {
+        String[] names = plugin.configuration.getNames();
+        StringBuilder sb = new StringBuilder(); 
+        for (String name : names) {
+            if (sb.length() + name.length() > 60) {
+                plugin.sendMessage(player, sb.toString());
+                sb = new StringBuilder();
+            }
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(name);
+        }
+        if (sb.length() > 0) {
+            plugin.sendMessage(player, sb.toString());
+        }
+    }
 }
