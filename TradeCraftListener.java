@@ -49,30 +49,18 @@ class TradeCraftListener extends PluginListener {
                 return false;
             }
 
-            String group = plugin.properties.getGroupRequiredToCreateInfiniteShops();
-
-            if (group.equals("*")) {
+            if (plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreateInfiniteShops())) {
                 return false;
             }
 
-            if (player.isInGroup(group)) {
-                return false;
-            }
-
-            plugin.log.info("Player \"" + player.getName() + "\" is not in group \"" + group + "\"");
             plugin.sendMessage(player, "You can't create infinite shops!");
 
             return true;
         }
 
-        String group = plugin.properties.getGroupRequiredToCreatePlayerOwnedShops();
-
-        if (!group.equals("*")) {
-            if (!player.isInGroup(group)) {
-                plugin.log.info("Player \"" + player.getName() + "\" is not in group \"" + group + "\"");
-                plugin.sendMessage(player, "You can't create player-owned shops!");
-                return true;
-            }
+        if (!plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreatePlayerOwnedShops())) {
+            plugin.sendMessage(player, "You can't create player-owned shops!");
+            return true;
         }
 
         if (player.getName().startsWith(ownerName)) {

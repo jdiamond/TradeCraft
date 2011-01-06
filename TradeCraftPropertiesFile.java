@@ -21,4 +21,12 @@ public class TradeCraftPropertiesFile {
     public String getGroupRequiredToCreatePlayerOwnedShops() {
         return propertiesFile.getString("group-required-to-create-player-owned-shops", "*");
     }
+
+    public String getGroupRequiredToBuyFromShops() {
+        return propertiesFile.getString("group-required-to-buy-from-shops", "*");
+    }
+
+    public String getGroupRequiredToSellToShops() {
+        return propertiesFile.getString("group-required-to-sell-to-shops", "*");
+    }
 }

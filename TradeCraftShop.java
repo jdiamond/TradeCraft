@@ -56,8 +56,11 @@ public abstract class TradeCraftShop {
     }
 
     private void handlePatronClick(Player player) {
+        boolean playerIsInBuyGroup = plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToBuyFromShops());
+        boolean playerIsInSellGroup = plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToSellToShops());
+
         if (getChestItemCount() == 0) {
-            if (playerCanBuy()) {
+            if (playerIsInBuyGroup && playerCanBuy()) {
                 plugin.sendMessage(player,
                         "You can buy %1$d %2$s for %3$d gold.",
                         getBuyAmount(),
@@ -65,7 +68,7 @@ public abstract class TradeCraftShop {
                         getBuyValue());
             }
 
-            if (playerCanSell()) {
+            if (playerIsInSellGroup && playerCanSell()) {
                 plugin.sendMessage(player,
                         "You can sell %1$d %2$s for %3$d gold.",
                         getSellAmount(),
@@ -83,9 +86,17 @@ public abstract class TradeCraftShop {
         }
 
         if (getChestItemType() == Item.Type.GoldIngot.getId()) {
-            playerWantsToBuy(player);
+            if (!playerIsInBuyGroup) {
+                plugin.sendMessage(player, "You are not allowed to buy from shops!");
+            } else {
+                playerWantsToBuy(player);
+            }
         } else if (getChestItemType() == getItemType()) {
-            playerWantsToSell(player);
+            if (!playerIsInSellGroup) {
+                plugin.sendMessage(player, "You are not allowed to sell to shops!");
+            } else { 
+                playerWantsToSell(player);
+            }
         } else {
             plugin.sendMessage(player, "You can't sell that here!");
         }

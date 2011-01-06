@@ -61,6 +61,13 @@ public class TradeCraft extends Plugin {
         player.sendMessage(message);
     }
 
+    public boolean playerIsInGroup(Player player, String group) {
+        if (group.equals("*")) {
+            return true;
+        }
+        return player.isInGroup(group);
+    }
+
     TradeCraftShop getShopFromSignOrChestBlock(Block block) {
         if (block.getType() == Block.Type.Chest.getType()) {
             block = server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
