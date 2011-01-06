@@ -15,6 +15,11 @@ The plugin is configured using a file called TradeCraft.txt that you need to
 create in the same folder as your server.properties folder. Details on the
 format of the file appear below.
 
+There is also a file called TradeCraft.properties that you can put in the same
+folder as your server.properties folder. You can set properties that configure
+how the plugin works in this file. Look inside the example file that comes with
+the plugin to see the properties you can set.
+
 Shops
 =====
 
