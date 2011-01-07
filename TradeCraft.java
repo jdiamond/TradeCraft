@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    static final String version = "133.1+";
+    static final String version = "133.2";
 
     private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
@@ -138,18 +138,27 @@ public class TradeCraft extends Plugin {
     }
 
     String getOwnerName(Sign sign) {
-        return getSpecialText(sign, "-", "-");
+        return getSpecialTextOnLine(sign, "-", "-", 3);
     }
 
     private String getSpecialText(Sign sign, String prefix, String suffix) {
         for (int i = 0; i < 4; i++) {
-            String signText = sign.getText(i);
-
-            if (signText.startsWith(prefix) &&
-                signText.endsWith(suffix) &&
-                signText.length() > 2) {
-                return signText.substring(1, signText.length() - 1);
+            String text = getSpecialTextOnLine(sign, prefix, suffix, i);
+            if (text != null) {
+                return text;
             }
+        }
+
+        return null;
+    }
+
+    private String getSpecialTextOnLine(Sign sign, String prefix, String suffix, int lineNumber) {
+        String signText = sign.getText(lineNumber);
+
+        if (signText.startsWith(prefix) &&
+            signText.endsWith(suffix) &&
+            signText.length() > 2) {
+            return signText.substring(1, signText.length() - 1);
         }
 
         return null;
