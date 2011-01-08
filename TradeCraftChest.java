@@ -25,9 +25,11 @@ class TradeCraftChest {
         return id != -1;
     }
 
-    public void populateChest(int id, int amount) {
+    public void clear() {
         chest.clearContents();
+    }
 
+    public void add(int id, int amount) {
         int maxStackSize = TradeCraft.getMaxStackSize(id);
         int blocks = amount / maxStackSize;
 
@@ -40,7 +42,14 @@ class TradeCraftChest {
         if (remainder > 0) {
             chest.addItem(new Item(id, remainder));
         }
+    }
 
-        chest.update();
+    public void update() {
+    }
+
+    public void populateChest(int id, int amount) {
+        clear();
+        add(id, amount);
+        update();
     }
 }

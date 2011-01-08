@@ -127,14 +127,20 @@ public abstract class TradeCraftShop {
             return;
         }
 
-        updateItemAndGoldAmounts(-amountPlayerWantsToBuy, goldPlayerWantsToSpend);
-        populateChest(getItemType(), amountPlayerWantsToBuy);
+        int requiredGoldForThatAmount = amountPlayerWantsToBuy * getBuyValue() / getBuyAmount();
+
+        updateItemAndGoldAmounts(-amountPlayerWantsToBuy, requiredGoldForThatAmount);
+
+        chest.clear();
+        chest.add(Item.Type.GoldIngot.getId(), goldPlayerWantsToSpend - requiredGoldForThatAmount);
+        chest.add(getItemType(), amountPlayerWantsToBuy);
+        chest.update();
 
         plugin.sendMessage(player,
                     "You bought %1$d %2$s for %3$d gold.",
                     amountPlayerWantsToBuy,
                     getItemName(),
-                    goldPlayerWantsToSpend);
+                    requiredGoldForThatAmount);
     }
 
     private void playerWantsToSell(Player player) {
@@ -161,12 +167,18 @@ public abstract class TradeCraftShop {
             return;
         }
 
-        updateItemAndGoldAmounts(amountPlayerWantsToSell, -goldPlayerShouldReceive);
-        populateChest(Item.Type.GoldIngot.getId(), goldPlayerShouldReceive);
+        int amountThatCanBeSold = goldPlayerShouldReceive * getSellAmount() / getSellValue();
+
+        updateItemAndGoldAmounts(amountThatCanBeSold, -goldPlayerShouldReceive);
+
+        chest.clear();
+        chest.add(getItemType(), amountPlayerWantsToSell - amountThatCanBeSold);
+        chest.add(Item.Type.GoldIngot.getId(), goldPlayerShouldReceive);
+        chest.update();
 
         plugin.sendMessage(player,
                     "You sold %1$d %2$s for %3$d gold.",
-                    amountPlayerWantsToSell,
+                    amountThatCanBeSold,
                     getItemName(),
                     goldPlayerShouldReceive);
     }
