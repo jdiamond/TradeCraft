@@ -155,6 +155,12 @@ public class TradeCraft extends Plugin {
     private String getSpecialTextOnLine(Sign sign, String prefix, String suffix, int lineNumber) {
         String signText = sign.getText(lineNumber);
 
+        if (signText == null) {
+            return null;
+        }
+
+        signText = signText.trim();
+
         if (signText.startsWith(prefix) &&
             signText.endsWith(suffix) &&
             signText.length() > 2) {
