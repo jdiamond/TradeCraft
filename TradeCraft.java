@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    static final String version = "133.2";
+    static final String version = "133.2+";
 
     private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 

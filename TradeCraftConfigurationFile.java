@@ -14,8 +14,8 @@ class TradeCraftConfigurationFile {
     private static final Pattern commentPattern = Pattern.compile("^\\s*#.*$");
     private static final Pattern infoPattern = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // name
-            "\\s*(\\d+)\\s*," + // id
-            "\\s*(\\d+)\\s*:\\s*(\\d+)\\s*" + // buyAmount:buyValue
+            "\\s*(\\d+)\\s*" + // id
+            "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*" + // buyAmount:buyValue
             "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*$"); // sellAmount:sellValue
 
     private final TradeCraft plugin;
@@ -60,8 +60,11 @@ class TradeCraftConfigurationFile {
                 TradeCraftConfigurationInfo info = new TradeCraftConfigurationInfo();
                 info.name = infoMatcher.group(1);
                 info.id = Integer.parseInt(infoMatcher.group(2));
-                info.sellAmount = info.buyAmount = Integer.parseInt(infoMatcher.group(3));
-                info.sellValue = info.buyValue = Integer.parseInt(infoMatcher.group(4));
+
+                if (infoMatcher.group(3) != null) {
+                    info.sellAmount = info.buyAmount = Integer.parseInt(infoMatcher.group(3));
+                    info.sellValue = info.buyValue = Integer.parseInt(infoMatcher.group(4));
+                }
 
                 if (infoMatcher.group(5) != null) {
                     info.sellAmount = Integer.parseInt(infoMatcher.group(5));
