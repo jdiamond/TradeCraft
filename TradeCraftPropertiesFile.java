@@ -29,4 +29,8 @@ public class TradeCraftPropertiesFile {
     public String getGroupRequiredToSellToShops() {
         return propertiesFile.getString("group-required-to-sell-to-shops", "*");
     }
+
+    public boolean getEnableDebugMessages() {
+        return propertiesFile.getBoolean("enable-debug-messages", false);
+    }
 }

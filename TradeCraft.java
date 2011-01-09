@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    static final String version = "133.2+";
+    static final String version = "133.3";
 
     private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
@@ -19,9 +19,9 @@ public class TradeCraft extends Plugin {
     final Server server = etc.getServer();
 
     // Objects used by the plugin.
-    final TradeCraftPropertiesFile properties = new TradeCraftPropertiesFile();
-    final TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(this);
-    final TradeCraftDataFile data = new TradeCraftDataFile(this);
+    TradeCraftPropertiesFile properties = new TradeCraftPropertiesFile();
+    TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(this);
+    TradeCraftDataFile data = new TradeCraftDataFile(this);
 
     private final TradeCraftListener listener = new TradeCraftListener(this);
 
@@ -33,6 +33,10 @@ public class TradeCraft extends Plugin {
 
     public void initialize() {
         log.info(pluginName + " " + version + " initialized");
+
+        properties = new TradeCraftPropertiesFile();
+        configuration = new TradeCraftConfigurationFile(this);
+        data = new TradeCraftDataFile(this);
 
         configuration.load();
         data.load();
@@ -67,6 +71,12 @@ public class TradeCraft extends Plugin {
         player.sendMessage(message);
     }
 
+    void trace(Player player, String format, Object... args) {
+        if (properties.getEnableDebugMessages()) {
+            sendMessage(player, format, args);
+        }
+    }
+
     public boolean playerIsInGroup(Player player, String group) {
         if (group.equals("*")) {
             return true;
@@ -74,15 +84,15 @@ public class TradeCraft extends Plugin {
         return player.isInGroup(group);
     }
 
-    TradeCraftShop getShopFromSignOrChestBlock(Block block) {
+    TradeCraftShop getShopFromSignOrChestBlock(Player player, Block block) {
         if (block.getType() == Block.Type.Chest.getType()) {
             block = server.getBlockAt(block.getX(), block.getY() + 1, block.getZ());
         }
 
-        return getShopFromSignBlock(block);
+        return getShopFromSignBlock(player, block);
     }
 
-    TradeCraftShop getShopFromSignBlock(Block block) {
+    TradeCraftShop getShopFromSignBlock(Player player, Block block) {
         if (block.getType() != Block.Type.WallSign.getType()) {
             return null;
         }
@@ -91,46 +101,62 @@ public class TradeCraft extends Plugin {
         int y = block.getY();
         int z = block.getZ();
 
+        trace(player, "You clicked a sign at %d, %d, %d.", x, y, z);
+
         Sign sign = (Sign)server.getComplexBlock(x, y, z);
 
         // The sign at this location can be null if it was just destroyed.
         if (sign == null) {
+            trace(player, "The sign is no longer there.");
             return null;
         }
 
         String itemName = getItemName(sign);
 
         if (itemName == null) {
+            trace(player, "There is no item name on the sign.");
             return null;
         }
 
+        trace(player, "The item name on the sign is %s.", itemName);
+
         if (!configuration.isConfigured(itemName)) {
+            trace(player, "The item name %s is not configured in TradeCraft.txt.", itemName);
             return null;
         }
 
         Block blockBelowSign = server.getBlockAt(x, y - 1, z);
 
         if (blockBelowSign.getType() != Block.Type.Chest.getType()) {
+            trace(player, "There is no chest beneath the sign.");
             return null;
         }
 
         Chest chest = (Chest)server.getComplexBlock(x, y - 1, z);
 
-        TradeCraftShop shop;
+        String ownerName = getOwnerName(sign);
 
-        if (getOwnerName(sign) == null) {
+        if (ownerName == null) {
+            trace(player, "There is no owner name on the sign.");
+
             if (!properties.getInfiniteShopsEnabled()) {
+                trace(player, "Ininite shops are not enabled.");
                 return null;
             }
-            shop = new TradeCraftInfiniteShop(this, sign, chest);
-        } else {
-            if (!properties.getPlayerOwnedShopsEnabled()) {
-                return null;
-            }
-            shop = new TradeCraftPlayerOwnedShop(this, sign, chest);
+
+            trace(player, "This is an infinite shop.");
+            return new TradeCraftInfiniteShop(this, sign, chest);
         }
 
-        return shop;
+        trace(player, "The owner name on the sign is %s.", ownerName);
+
+        if (!properties.getPlayerOwnedShopsEnabled()) {
+            trace(player, "Player-owned shops are not enabled.");
+            return null;
+        }
+
+        trace(player, "This is a player-owned shop.");
+        return new TradeCraftPlayerOwnedShop(this, sign, chest);
     }
 
     String getItemName(Sign sign) {
@@ -144,6 +170,7 @@ public class TradeCraft extends Plugin {
     private String getSpecialText(Sign sign, String prefix, String suffix) {
         for (int i = 0; i < 4; i++) {
             String text = getSpecialTextOnLine(sign, prefix, suffix, i);
+
             if (text != null) {
                 return text;
             }
@@ -164,7 +191,15 @@ public class TradeCraft extends Plugin {
         if (signText.startsWith(prefix) &&
             signText.endsWith(suffix) &&
             signText.length() > 2) {
-            return signText.substring(1, signText.length() - 1);
+
+            String text = signText.substring(1, signText.length() - 1);
+            text = text.trim();
+
+            if (text.equals("")) {
+                return null;
+            }
+
+            return text;
         }
 
         return null;

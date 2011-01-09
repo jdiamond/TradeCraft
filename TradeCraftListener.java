@@ -7,7 +7,7 @@ class TradeCraftListener extends PluginListener {
     }
 
     public void onBlockRightClicked(Player player, Block blockClicked, Item itemInHand) {
-        TradeCraftShop shop = plugin.getShopFromSignBlock(blockClicked);
+        TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
 
         if (shop == null) {
             return;
@@ -17,7 +17,7 @@ class TradeCraftListener extends PluginListener {
     }
 
     public boolean onBlockBreak(Player player, Block block) {
-        TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(block);
+        TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(player, block);
 
         if (shop == null) {
             return false;
