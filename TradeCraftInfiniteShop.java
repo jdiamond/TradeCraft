@@ -1,4 +1,4 @@
-public class TradeCraftInfiniteShop extends TradeCraftShop {
+public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     private final TradeCraftConfigurationInfo configurationInfo;
 
     public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) {

@@ -1,4 +1,4 @@
-public class TradeCraftPlayerOwnedShop extends TradeCraftShop {
+public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     private final String ownerName;
     private final String itemName;
     private final int itemType;

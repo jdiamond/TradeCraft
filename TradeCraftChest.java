@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 class TradeCraftChest {
     private Chest chest;
     public int id;
@@ -51,5 +54,29 @@ class TradeCraftChest {
         clear();
         add(id, amount);
         update();
+    }
+
+    public int getAmountOfCurrencyInChest() {
+        int amount = 0;
+        for (Item item : chest.getContents()) {
+            if (item != null) {
+                if (item.getItemId() == Item.Type.GoldIngot.getId()) {
+                    amount += item.getAmount();
+                }
+            }
+        }
+        return amount;
+    }
+
+    public List<Item> getNonCurrencyItems() {
+        List<Item> items = new ArrayList<Item>();
+        for (Item item : chest.getContents()) {
+            if (item != null) {
+                if (item.getType() != Item.Type.GoldIngot) {
+                    items.add(item);
+                }
+            }
+        }
+        return items;
     }
 }

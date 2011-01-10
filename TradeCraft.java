@@ -10,7 +10,7 @@ public class TradeCraft extends Plugin {
     // The plugin version. The first part is the version of hMod this is built against.
     // The second part is the release number built against that version of hMod.
     // A "+" at the end means this is a development version that hasn't been released yet.
-    static final String version = "133.3";
+    static final String version = "133.3+";
 
     private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
@@ -120,11 +120,6 @@ public class TradeCraft extends Plugin {
 
         trace(player, "The item name on the sign is %s.", itemName);
 
-        if (!configuration.isConfigured(itemName)) {
-            trace(player, "The item name %s is not configured in TradeCraft.txt.", itemName);
-            return null;
-        }
-
         Block blockBelowSign = server.getBlockAt(x, y - 1, z);
 
         if (blockBelowSign.getType() != Block.Type.Chest.getType()) {
@@ -133,6 +128,26 @@ public class TradeCraft extends Plugin {
         }
 
         Chest chest = (Chest)server.getComplexBlock(x, y - 1, z);
+
+        if (itemName.toLowerCase().equals("repair")) {
+            if (!properties.getRepairShopsEnabled()) {
+                trace(player, "Repair shops are not enabled.");
+                return null;
+            }
+
+            if (!this.playerIsInGroup(player, properties.getGroupRequiredToUseRepairShops())) {
+                trace(player, "You can't use repair shops.");
+                return null;
+            }
+
+            trace(player, "This is a repair shop.");
+            return new TradeCraftRepairShop(this, sign, chest);
+        }
+
+        if (!configuration.isConfigured(itemName)) {
+            trace(player, "The item name %s is not configured in TradeCraft.txt.", itemName);
+            return null;
+        }
 
         String ownerName = getOwnerName(sign);
 
